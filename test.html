@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>React Sitemap Viewer</title>
+
+  <!-- React və ReactDOM CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+  <!-- Babel (JSX üçün) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    pre { white-space: pre-wrap; word-wrap: break-word; background: #f5f5f5; padding: 1rem; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- JSX kod Babel ilə -->
+  <script type="text/babel">
+    function App() {
+      const [sitemap, setSitemap] = React.useState('');
+      const [loading, setLoading] = React.useState(true);
+
+      React.useEffect(() => {
+        const loadSitemap = async () => {
+          try {
+         const response = await fetch('https://tehsil.avtoicare.az/sitemap.xml', {
+          headers: {
+            'Accept': 'application/xml'
+          }
+        });
+
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.text();
+            setSitemap(data);
+          } catch (error) {
+            console.error('Error loading sitemap:', error);
+            setSitemap('Sitemap yüklənərkən xəta baş verdi. (CORS ola bilər)');
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        loadSitemap();
+      }, []);
+
+      if (loading) return <div>Loading sitemap...</div>;
+
+      return (
+        <>
+        {sitemap}
+        </>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
