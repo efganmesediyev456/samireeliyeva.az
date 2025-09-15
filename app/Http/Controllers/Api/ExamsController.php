@@ -47,7 +47,7 @@ class ExamsController extends Controller
 
         return response()->json([
             'exam' => new ExamResource($item),
-            'questions' => ExamInnerResource::collection($item->questions),
+            'questions' => $item?->questions ? ExamInnerResource::collection($item?->questions) : [],
         ]);
     }
 
